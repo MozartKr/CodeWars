@@ -102,6 +102,11 @@ namespace KataTest
             }
             return arrayWithoutFive.Count;
         }
+
+        public static string PigIt(string str)
+        {
+            return string.Join(" ", str.Split(' ').Select(s => s.Substring(1, s.Length - 1) + s.Substring(0, 1) + "ay"));
+        }
     }
 
     public class Accumul
