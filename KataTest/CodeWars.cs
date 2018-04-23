@@ -107,6 +107,15 @@ namespace KataTest
         {
             return string.Join(" ", str.Split(' ').Select(s => s.Substring(1, s.Length - 1) + s.Substring(0, 1) + "ay"));
         }
+
+        public static string TitleCase(string title, string minorWords = "")
+        {
+            if (string.IsNullOrEmpty(minorWords)) return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(title);
+            return string.Join(" ", title.ToLower().Split(' ').Select((s, i) =>
+                i == 0 | !minorWords.ToLower().Split(' ').Contains(s)
+                    ? CultureInfo.CurrentCulture.TextInfo.ToTitleCase(s)
+                    : s));
+        }
     }
 
     public class Accumul
@@ -212,6 +221,26 @@ namespace KataTest
             //n = n.ToString().Select(c => Convert.ToInt32(c.ToString())).Sum();
             //return (int) (n < 10 ? n : DigitalRoot(n));
             return (int)(1 + (n - 1) % 9);
+        }
+    }
+
+    public class WhichAreIn
+    {
+        public static string[] inArray(string[] array1, string[] array2)
+        {
+            //return array1.Where(delegate (string s, int i)
+            //{
+            //    foreach (var s2 in array2)
+            //    {
+            //        var s2Len = s2.Length;
+            //        var replaceLen = s2.Replace(s, string.Empty).Length;
+            //        if (s2Len != replaceLen)
+            //            return true;
+            //    }
+            //    return false;
+            //}).OrderBy(s => s).ToArray();
+
+            return array1.Distinct().Where(s1 => array2.Any(s2 => s2.Contains(s1))).OrderBy(s => s).ToArray();
         }
     }
 }
