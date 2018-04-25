@@ -3,6 +3,7 @@ using System.Collections;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace KataTest
 {
@@ -115,6 +116,11 @@ namespace KataTest
                 i == 0 | !minorWords.ToLower().Split(' ').Contains(s)
                     ? CultureInfo.CurrentCulture.TextInfo.ToTitleCase(s)
                     : s));
+        }
+
+        public static int CountSmileys(string[] smileys)
+        {
+            return smileys.Count(s => new Regex("(:|;)(-|~)?(\\)|D)").IsMatch(s));
         }
     }
 
@@ -241,6 +247,94 @@ namespace KataTest
             //}).OrderBy(s => s).ToArray();
 
             return array1.Distinct().Where(s1 => array2.Any(s2 => s2.Contains(s1))).OrderBy(s => s).ToArray();
+        }
+    }
+
+    public class Sudoku
+    {
+        public static string DoneOrNot(int[][] board)
+        {
+            var finished = true;
+            for (int i = 0; i < board.Length; i++)
+            {
+                var sortRow = board[i].OrderBy(data => data);
+                var sortColumn = board.Select(t => t[i]).ToList().OrderBy(data => data);
+
+                if (!sortRow.SequenceEqual(Enumerable.Range(1, 9)) |
+                    !sortColumn.SequenceEqual(Enumerable.Range(1, 9)))
+                {
+                    finished = false;
+                    break;
+                }
+            }
+
+            if (finished)
+            {
+                for (int i = 0; i < board.Length; i+=3)
+                {
+                    for (int j = 0; j < board.Length; j+=3)
+                    {
+                        var region = new List<int>();
+                        region.AddRange(board[i].Skip(j).Take(3));
+                        region.AddRange(board[i+1].Skip(j).Take(3));
+                        region.AddRange(board[i+2].Skip(j).Take(3));
+
+                        var sortRegion = region.OrderBy(data => data);
+                        if (!sortRegion.SequenceEqual(Enumerable.Range(1, 9)))
+                        {
+                            finished = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            return finished ? "Finished!" : "Try again!";
+        }
+    }
+
+    public class SumSquaredDivisors
+    {
+        public class Squared
+        {
+            public long Num { get; set; }
+            public long SquaredValue { get; set; }
+
+            public override string ToString()
+            {
+                return $"[{Num}, {SquaredValue}]";
+            }
+        }
+
+        public class SquaredList : List<Squared>
+        {
+            public override string ToString()
+            {
+                return $"[{string.Join(", ", this)}]";
+            }
+        }
+
+        public static string listSquared(long m, long n)
+        {
+            var listSquared = new SquaredList();
+            for (var i = m; i < n; i++)
+            {
+                var squaredValue = GetDivisors((int)i).Select(j => Math.Pow(j, 2)).Sum();
+                var sqrtSquaredValue = Math.Sqrt(squaredValue);
+                if (sqrtSquaredValue.Equals(Math.Floor(sqrtSquaredValue)))
+                {
+                    listSquared.Add(new Squared {Num = i, SquaredValue = (long) squaredValue});
+                }
+            }
+            
+            return listSquared.ToString();
+        }
+
+        public static IEnumerable<int> GetDivisors(int n)
+        {
+            return from a in Enumerable.Range(1, n)
+                where n % a == 0
+                select a;
         }
     }
 }
