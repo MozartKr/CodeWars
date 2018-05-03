@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace KataTest
@@ -110,6 +111,42 @@ namespace KataTest
             Assert.AreEqual(Kata.CountSmileys(new string[] { ":)", ":(", ":D", ":O", ":;" }), 2);
             Assert.AreEqual(Kata.CountSmileys(new string[] { ";]", ":[", ";*", ":$", ";-D" }), 1);
             Assert.AreEqual(Kata.CountSmileys(new string[] { ";", ")", ";*", ":$", "8-D" }), 0);
+        }
+
+        private string[] urls = new string[] {"mysite.com/pictures/holidays.html",
+                                          "www.codewars.com/users/GiacomoSorbi?ref=CodeWars",
+                                          "www.microsoft.com/docs/index.htm#top",
+                                          "mysite.com/very-long-url-to-make-a-silly-yet-meaningful-example/example.asp",
+                                          "www.very-long-site_name-to-make-a-silly-yet-meaningful-example.com/users/giacomo-sorbi",
+                                          "https://www.linkedin.com/in/giacomosorbi",
+                                          "www.agcpartners.co.uk/",
+                                          "www.agcpartners.co.uk",
+                                          "https://www.agcpartners.co.uk/index.html",
+                                          "http://google.ca/web/paper-uber-cauterization-eurasian-diplomatic/#info"};
+
+        private string[] seps = new string[] { " : ", " / ", " * ", " > ", " + ", " * ", " * ", " # ", " >>> ", " - " };
+
+
+        private string[] anss = new string[] {"<a href=\"/\">HOME</a> : <a href=\"/pictures/\">PICTURES</a> : <span class=\"active\">HOLIDAYS</span>",
+                                          "<a href=\"/\">HOME</a> / <a href=\"/users/\">USERS</a> / <span class=\"active\">GIACOMOSORBI</span>",
+                                          "<a href=\"/\">HOME</a> * <span class=\"active\">DOCS</span>",
+                                          "<a href=\"/\">HOME</a> > <a href=\"/very-long-url-to-make-a-silly-yet-meaningful-example/\">VLUMSYME</a> > <span class=\"active\">EXAMPLE</span>",
+                                          "<a href=\"/\">HOME</a> + <a href=\"/users/\">USERS</a> + <span class=\"active\">GIACOMO SORBI</span>",
+                                          "<a href=\"/\">HOME</a> * <a href=\"/in/\">IN</a> * <span class=\"active\">GIACOMOSORBI</span>",
+                                          "<span class=\"active\">HOME</span>",
+                                          "<span class=\"active\">HOME</span>",
+                                          "<span class=\"active\">HOME</span>",
+                                          "<a href=\"/\">HOME</a> - <a href=\"/web/\">WEB</a> - <span class=\"active\">PUCED</span>"};
+        [Test]
+        public void ExampleTestsGenerateBC()
+        {
+            for (int i = 9; i < 10; i++)
+            {
+                Console.WriteLine($"\nTest With: {urls[i]}");
+                if (i == 5) Console.WriteLine("\nThe one used in the above test was my LinkedIn Profile; if you solved the kata this far and manage to get it, feel free to add me as a contact, message me about the language that you used and I will be glad to endorse you in that skill and possibly many others :)\n\n ");
+
+                Assert.AreEqual(anss[i], Kata.GenerateBC(urls[i], seps[i]));
+            }
         }
     }
 
@@ -299,6 +336,23 @@ namespace KataTest
 
         [Test, TestCaseSource("testCases")]
         public void Test(string expected, int[][] board) => Assert.AreEqual(expected, Sudoku.DoneOrNot(board));
+
+        private static IEnumerable<TestCaseData> testCasesAlphanumeric
+        {
+            get
+            {
+                yield return new TestCaseData("Mazinkaiser").Returns(true);
+                yield return new TestCaseData("hello world_").Returns(false);
+                yield return new TestCaseData("PassW0rd").Returns(true);
+                yield return new TestCaseData("     ").Returns(false);
+                yield return new TestCaseData("helloworld_").Returns(false);
+                yield return new TestCaseData("").Returns(false);
+                yield return new TestCaseData("_").Returns(false);
+            }
+        }
+
+        [Test, TestCaseSource("testCasesAlphanumeric")]
+        public bool TestAlphanumeric(string str) => Kata.Alphanumeric(str);
     }
 
     [TestFixture]
@@ -319,6 +373,20 @@ namespace KataTest
         public void Test03()
         {
             Assert.AreEqual("[[287, 84100]]", SumSquaredDivisors.listSquared(250, 500));
+        }
+    }
+
+    [TestFixture]
+    public class HumanReadableTimeTest
+    {
+        [Test]
+        public void HumanReadableTest()
+        {
+            Assert.AreEqual("00:00:00", TimeFormat.GetReadableTime(0));
+            Assert.AreEqual("00:00:05", TimeFormat.GetReadableTime(5));
+            Assert.AreEqual("00:01:00", TimeFormat.GetReadableTime(60));
+            Assert.AreEqual("23:59:59", TimeFormat.GetReadableTime(86399));
+            Assert.AreEqual("99:59:59", TimeFormat.GetReadableTime(359999));
         }
     }
 }

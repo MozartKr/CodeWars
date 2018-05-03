@@ -122,6 +122,43 @@ namespace KataTest
         {
             return smileys.Count(s => new Regex("(:|;)(-|~)?(\\)|D)").IsMatch(s));
         }
+
+        public static bool Alphanumeric(string str)
+        {
+            return new Regex("^([a-zA-Z0-9])+$").IsMatch(str);
+        }
+
+        public static string GenerateBC(string url, string separator)
+        {
+            var urlArrays = url.Replace("://", string.Empty).Split('/').Where(s => !(Regex.IsMatch(s, "^[#|?]+") | Regex.IsMatch(s, "^index.\\S+")) & !string.IsNullOrEmpty(s)).ToArray();
+            if (urlArrays.Length == 0 | urlArrays.Length == 1) return "<span class=\"active\">HOME</span>";
+            
+            var listStr = new List<string> {"<a href=\"/\">HOME</a>"};
+            for (var i = 1; i < urlArrays.Length; i++)
+            {
+                if (i == urlArrays.Length - 1)
+                {
+                    var str = urlArrays[i].Replace('?', '.').Replace('#', '.').Split('.')[0];
+                    str = str.Length > 30 ? GetShortenStr(str) : str;
+                    listStr.Add($"<span class=\"active\">{str.Replace('-', ' ').ToUpper()}</span>");
+                }
+                else
+                {
+                    var originStr = string.Join("/", urlArrays.Where((s, idx) => idx >= 1 & idx <=i));
+                    var str = urlArrays[i].Length > 30 ? GetShortenStr(urlArrays[i]) : urlArrays[i];
+                    listStr.Add($"<a href=\"/{originStr}/\">{str.Replace('-', ' ').ToUpper()}</a>");
+                }
+            }
+
+            return string.Join(separator, listStr);
+        }
+
+        public static string GetShortenStr(string str)
+        {
+            var shortenElements = new[] {"the", "of", "in", "from", "by", "with", "and", "or", "for", "to", "at", "a"};
+            var strArray = str.Split('-');
+            return strArray.Where(s => !shortenElements.Contains(s)).Aggregate(string.Empty, (current, s) => current + s[0]);
+        }
     }
 
     public class Accumul
@@ -335,6 +372,18 @@ namespace KataTest
             return from a in Enumerable.Range(1, n)
                 where n % a == 0
                 select a;
+        }
+    }
+
+    public static class TimeFormat
+    {
+        public static string GetReadableTime(int seconds)
+        {
+            var ts = TimeSpan.FromSeconds(seconds);
+
+            return ts.TotalDays >= 1
+                ? $"{(int) ts.TotalHours}:{ts:mm\':\'ss}"
+                : ts.ToString("hh':'mm':'ss");
         }
     }
 }
