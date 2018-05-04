@@ -386,4 +386,155 @@ namespace KataTest
                 : ts.ToString("hh':'mm':'ss");
         }
     }
+
+    public class ToSmallest
+    {
+        public static long[] Smallest(long n)
+        {
+            var smallestN = n;
+            var smallestI = 0;
+            var smallestj = 0;
+
+            for (int i = 0; i < n.ToString().Length; i++)
+            {
+                for (int j = 0; j < n.ToString().Length; j++)
+                {
+                    var switchNum = GetSwithNumber(n.ToString(), i, j);
+                    if (switchNum < smallestN || (switchNum == smallestN) & i < smallestI)
+                    {
+                        smallestN = switchNum;
+                        smallestI = i;
+                        smallestj = j;
+                    }
+                }
+            }
+            return new[] { smallestN, smallestI, smallestj };
+        }
+
+        public static long GetSwithNumber(string num, int i, int j)
+        {
+            var numStr = num.Remove(i, 1).Insert(j, num[i].ToString());
+            return Convert.ToInt64(numStr);
+        }
+    }
+}
+
+namespace TopDownMovement
+{
+    public enum Direction { Up = 8, Down = 2, Left = 4, Right = 6 }
+
+    public struct Tile
+    {
+        public int X { get; }
+        public int Y { get; }
+
+        public Tile(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+    }
+
+    public static class Input
+    {
+        private static Dictionary<Direction, bool> states = new Dictionary<Direction, bool>();
+       
+        // pressed = true, released = false
+        public static bool GetState(Direction direction)
+        {
+            return states[direction];
+        }
+
+        public static void Press(Direction direction)
+        {
+            states[direction] = true;
+        }
+
+        public static void Release(Direction direction)
+        {
+            states[direction] = false;
+        }
+
+        public static void Clear()
+        {
+            states = new Dictionary<Direction, bool>
+            {
+                {Direction.Up, false},
+                {Direction.Down, false},
+                {Direction.Left, false},
+                {Direction.Right, false}
+            };
+        }
+    }
+
+    public class PlayerMovement
+    {
+        public Tile Position { get; private set; }
+        public Direction Direction { get; private set; }
+        private readonly List<Direction> InputList = new List<Direction>();
+        private readonly Direction[] SortPriority = { Direction.Right, Direction.Left, Direction.Down, Direction.Up };
+
+        public PlayerMovement(int x, int y)
+        {
+            Position = new Tile(x, y);
+        }
+
+        public void Update()
+        {
+            UpdateInputList();
+
+            var topPriorityDirection = GetTopPriorityDirectionToInput();
+            if (topPriorityDirection == 0) return;
+
+            if (Direction != topPriorityDirection)
+            {
+                Direction = topPriorityDirection;
+            }
+            else
+            {
+                Move(Direction);
+            }
+            InputList.Remove(Direction);
+        }
+
+        public void Move(Direction direction)
+        {
+            var x = 0;
+            var y = 0;
+
+            switch (direction)
+            {
+                case Direction.Up:
+                    y += 1;
+                    break;
+                case Direction.Down:
+                    y -= 1;
+                    break;
+                case Direction.Left:
+                    x -= 1;
+                    break;
+                case Direction.Right:
+                    x += 1;
+                    break;
+            }
+
+            Position = new Tile(Position.X+x, Position.Y+y);
+        }
+
+        public Direction GetTopPriorityDirectionToInput()
+        {
+            return InputList.Count > 0 ? InputList.LastOrDefault() : Direction;
+        }
+
+        public void UpdateInputList()
+        {
+            foreach (var direction in SortPriority)
+            {
+                if (Input.GetState(direction) & Direction != direction)
+                {
+                    InputList.Add(direction);
+                }
+            }
+        }
+    }
 }

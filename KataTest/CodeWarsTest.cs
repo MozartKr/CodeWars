@@ -389,4 +389,112 @@ namespace KataTest
             Assert.AreEqual("99:59:59", TimeFormat.GetReadableTime(359999));
         }
     }
+
+    [TestFixture]
+    public static class ToSmallestTests
+    {
+
+        private static void testing(long n, string res)
+        {
+            Assert.AreEqual(res, Array2String(ToSmallest.Smallest(n)));
+        }
+        private static string Array2String(long[] list)
+        {
+            return "[" + string.Join(", ", list) + "]";
+        }
+        [Test]
+        public static void test1()
+        {
+            Console.WriteLine("Basic Tests smallest");
+                
+            testing(817253678486335648, "[172536784863356488, 0, 16]");
+            testing(209917, "[29917, 0, 1]");
+            testing(635901196224570400, "[63590119622457040, 16, 0]");
+        }
+    }
+}
+
+namespace TopDownMovement
+{
+    [TestFixture]
+    public class SolutionTest
+    {
+        private PlayerMovement _player;
+
+        private void TestEquality(Direction direction, int x, int y)
+        {
+            _player.Update();
+
+            Assert.AreEqual(direction, _player.Direction);
+            Assert.AreEqual(new Tile(x, y), _player.Position);
+        }
+
+        [Test(Description = "Basic Test 1")]
+        public void BasicTest1()
+        {
+            _player = new PlayerMovement(0, 0);
+            Input.Clear();
+
+            Press(Direction.Down);
+
+            TestEquality(Direction.Down, 0, 0);
+            TestEquality(Direction.Down, 0, -1);
+            TestEquality(Direction.Down, 0, -2);
+
+            Press(Direction.Left);
+            Press(Direction.Right);
+
+            TestEquality(Direction.Left, 0, -2);
+            TestEquality(Direction.Left, -1, -2);
+
+            Release(Direction.Left);
+
+            TestEquality(Direction.Right, -1, -2);
+
+            Release(Direction.Right);
+
+            TestEquality(Direction.Down, -1, -2);
+            TestEquality(Direction.Down, -1, -3);
+
+            Release(Direction.Down);
+
+            TestEquality(Direction.Down, -1, -3);
+        }
+
+        [Test(Description = "All keys at once")]
+        public void BasicTest2()
+        {
+            _player = new PlayerMovement(0, 0);
+            Input.Clear();
+
+            Press(Direction.Down);
+            Press(Direction.Left);
+            Press(Direction.Right);
+            Press(Direction.Up);
+
+            TestEquality(Direction.Up, 0, 0);
+            TestEquality(Direction.Up, 0, 1);
+
+            Release(Direction.Left);
+
+            TestEquality(Direction.Up, 0, 2);
+
+            Release(Direction.Up);
+
+            TestEquality(Direction.Down, 0, 2);
+
+            Release(Direction.Down);
+
+            TestEquality(Direction.Right, 0, 2);
+            TestEquality(Direction.Right, 1, 2);
+            TestEquality(Direction.Right, 2, 2);
+
+            Release(Direction.Right);
+
+            TestEquality(Direction.Right, 2, 2);
+        }
+
+        private void Press(Direction dir) { Console.WriteLine("Pressed " + dir); Input.Press(dir); }
+        private void Release(Direction dir) { Console.WriteLine("Released " + dir); Input.Release(dir); }
+    }
 }
