@@ -1,9 +1,128 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace KataTest
 {
+    [TestFixture]
+    public class MorseCodeDecoderTests
+    {
+        [Test]
+        public void MorseCodeDecoderBasicTest_1()
+        {
+            //try
+            {
+                string input = "...---...";
+                string expected = "SOS";
+
+                string actual = MorseCodeDecoder.Decode(input);
+
+                Assert.AreEqual(expected, actual);
+            }
+            //catch (Exception ex)
+            //{
+            //    Assert.Fail("There seems to be an error somewhere in your code. Exception message reads as follows: " + ex.Message);
+            //}
+        }
+    }
+
+    [TestFixture]
+    public class DubstepTests
+    {
+        [Test]
+        public void Test1()
+        {
+            Assert.AreEqual("ABC", Dubstep.SongDecoder("WUBWUBABCWUB"));
+        }
+
+        [Test]
+        public void Test2()
+        {
+            Assert.AreEqual("R L", Dubstep.SongDecoder("RWUBWUBWUBLWUB"));
+        }
+    }
+
+    [TestFixture]
+    public class Tests
+    {
+        [Test]
+        public static void ShouldWorkForSomeExamples()
+        {
+            Assert.AreEqual(false, Kata.IsSquare(-1), "negative numbers aren't square numbers");
+            Assert.AreEqual(false, Kata.IsSquare(3), "3 isn't a square number");
+            Assert.AreEqual(true, Kata.IsSquare(4), "4 is a square number");
+            Assert.AreEqual(true, Kata.IsSquare(25), "25 is a square number");
+            Assert.AreEqual(false, Kata.IsSquare(26), "26 isn't a square number");
+        }
+    }
+
+    [TestFixture]
+    public class PersistTests
+    {
+
+        [Test]
+        public void Test1()
+        {
+            Console.WriteLine("****** Basic Tests");
+            Assert.AreEqual(3, Persist.Persistence(39));
+            Assert.AreEqual(0, Persist.Persistence(4));
+            Assert.AreEqual(2, Persist.Persistence(25));
+            Assert.AreEqual(4, Persist.Persistence(999));
+        }
+
+    }
+    [TestFixture]
+    public class JadenCaseTest
+    {
+        [Test]
+        public void FixedTest()
+        {
+            Assert.AreEqual("How Can Mirrors Be Real If Our Eyes Aren't Real",
+                "How can mirrors be real if our eyes aren't real".ToJadenCase(),
+                "Strings didn't match.");
+        }
+    }
+
+    [TestFixture]
+    public class GetMiddleTest
+    {
+        [Test]
+        public void GenericTests()
+        {
+            Assert.AreEqual("es", Kata.GetMiddle("test"));
+            Assert.AreEqual("t", Kata.GetMiddle("testing"));
+            Assert.AreEqual("dd", Kata.GetMiddle("middle"));
+            Assert.AreEqual("A", Kata.GetMiddle("A"));
+        }
+    }
+
+    [TestFixture]
+    public class BasicTests
+    {
+
+        private static IEnumerable<TestCaseData> testCases
+        {
+            get
+            {
+                //yield return new TestCaseData("Dermatoglyphics").Returns(true);
+                //yield return new TestCaseData("isogram").Returns(true);
+                //yield return new TestCaseData("moose").Returns(false);
+                //yield return new TestCaseData("isIsogram").Returns(false);
+                //yield return new TestCaseData("aba").Returns(false);
+                yield return new TestCaseData("moOse").Returns(false);
+                //yield return new TestCaseData("thumbscrewjapingly").Returns(true);
+                //yield return new TestCaseData("").Returns(true);
+            }
+        }
+
+        [Test, TestCaseSource("testCases")]
+        public bool Test(string str)
+        {
+            return Kata.IsIsogram(str);
+        }
+    }
+
     [TestFixture]
     public class ValidateWordTest
     {
@@ -33,6 +152,21 @@ namespace KataTest
     [TestFixture]
     public class KataTests
     {
+        [Test]
+        public void DuplicateEncodeTests()
+        {
+            Assert.AreEqual("(((", Kata.DuplicateEncode("din"));
+            Assert.AreEqual("()()()", Kata.DuplicateEncode("recede"));
+            Assert.AreEqual(")())())", Kata.DuplicateEncode("Success"), "should ignore case");
+            Assert.AreEqual("))((", Kata.DuplicateEncode("(( @"));
+        }
+
+        [Test]
+        public void TestCase1()
+        {
+            Assert.AreEqual(5, Kata.GetVowelCount("abracadabra"), "Nope!");
+        }
+
         [Test]
         public void BasicTests()
         {
@@ -77,6 +211,130 @@ namespace KataTest
     [TestFixture]
     public class SolutionTest
     {
+        [Test]
+        public void EmptyTest()
+        {
+            Assert.AreEqual("", Kata.UniqueInOrder(""));
+        }
+        [Test]
+        public void Test1()
+        {
+            //Assert.AreEqual("ABCDAB", Kata.UniqueInOrder("AAAABBBCCDAABBB"));
+
+            Assert.AreEqual(new List<string> { "123", "45" }, Kata.UniqueInOrder(new List<string> { "123", "123", "45" }));
+        }
+
+        [Test]
+        public void SampleTest()
+        {
+            Assert.AreEqual(new int[] { 3, 5 }, Kata.Divisors(15));
+            Assert.AreEqual(new int[] { 2, 4, 8 }, Kata.Divisors(16));
+            Assert.AreEqual(new int[] { 11, 23 }, Kata.Divisors(253));
+            Assert.AreEqual(new int[] { 2, 3, 4, 6, 8, 12 }, Kata.Divisors(24));
+        }
+
+        [Test]
+        public void GetIntegersFromList_MixedValues_ShouldPass_1()
+        {
+            var list = new List<object>() { 1, 2, "a", "b" };
+            var expected = new List<int>() { 1, 2 };
+            var actual = ListFilterer.GetIntegersFromList(list);
+            Assert.IsTrue(expected.SequenceEqual(actual));
+        }
+        [Test]
+        public void GetIntegersFromList_MixedValues_ShouldPass_2()
+        {
+            var list = new List<object>() { 1, "a", "b", 0, 15 };
+            var expected = new List<int>() { 1, 0, 15 };
+            var actual = ListFilterer.GetIntegersFromList(list);
+            Assert.IsTrue(expected.SequenceEqual(actual));
+        }
+        [Test]
+        public void GetIntegersFromList_MixedValues_ShouldPass_3()
+        {
+            var list = new List<object>() { 1, 2, "aasf", "1", "123", 123 };
+            var expected = new List<int>() { 1, 2, 123 };
+            var actual = ListFilterer.GetIntegersFromList(list);
+            Assert.IsTrue(expected.SequenceEqual(actual));
+        }
+
+        [Test]
+        public void Tests()
+        {
+            Assert.AreEqual(5, Kata.find_it(new[] { 20, 1, -1, 2, -2, 3, 3, 5, 5, 1, 2, 4, 20, 4, -1, -2, 5 }));
+        }
+
+        [Test, Description("ValidatePin should return false for pins with length other than 4 or 6")]
+        public void LengthTest()
+        {
+            Assert.AreEqual(false, Kata.ValidatePin("1"), "Wrong output for \"1\"");
+            Assert.AreEqual(false, Kata.ValidatePin("12"), "Wrong output for \"12\"");
+            Assert.AreEqual(false, Kata.ValidatePin("123"), "Wrong output for \"123\"");
+            Assert.AreEqual(false, Kata.ValidatePin("12345"), "Wrong output for \"12345\"");
+            Assert.AreEqual(false, Kata.ValidatePin("1234567"), "Wrong output for \"1234567\"");
+            Assert.AreEqual(false, Kata.ValidatePin("-1234"), "Wrong output for \"-1234\"");
+            Assert.AreEqual(false, Kata.ValidatePin("1.234"), "Wrong output for \"1.234\"");
+            Assert.AreEqual(false, Kata.ValidatePin("-1.234"), "Wrong output for \"-1.234\"");
+            Assert.AreEqual(false, Kata.ValidatePin("00000000"), "Wrong output for \"00000000\"");
+        }
+
+        [Test, Description("ValidatePin should return false for pins which contain characters other than digits")]
+        public void NonDigitTest()
+        {
+            Assert.AreEqual(false, Kata.ValidatePin("a234"), "Wrong output for \"a234\"");
+            Assert.AreEqual(false, Kata.ValidatePin(".234"), "Wrong output for \".234\"");
+        }
+
+        [Test, Description("ValidatePin should return true for valid pins")]
+        public void ValidTest()
+        {
+            Assert.AreEqual(true, Kata.ValidatePin("1234"), "Wrong output for \"1234\"");
+            Assert.AreEqual(true, Kata.ValidatePin("0000"), "Wrong output for \"0000\"");
+            Assert.AreEqual(true, Kata.ValidatePin("1111"), "Wrong output for \"1111\"");
+            Assert.AreEqual(true, Kata.ValidatePin("123456"), "Wrong output for \"123456\"");
+            Assert.AreEqual(true, Kata.ValidatePin("098765"), "Wrong output for \"098765\"");
+            Assert.AreEqual(true, Kata.ValidatePin("000000"), "Wrong output for \"000000\"");
+            Assert.AreEqual(true, Kata.ValidatePin("090909"), "Wrong output for \"090909\"");
+        }
+
+        [Test]
+        public void EncryptExampleTests()
+        {
+            Assert.AreEqual("This is a test!", Kata.Encrypt("This is a test!", 0));
+            Assert.AreEqual("hsi  etTi sats!", Kata.Encrypt("This is a test!", 1));
+            Assert.AreEqual("s eT ashi tist!", Kata.Encrypt("This is a test!", 2));
+            Assert.AreEqual(" Tah itse sits!", Kata.Encrypt("This is a test!", 3));
+            Assert.AreEqual("This is a test!", Kata.Encrypt("This is a test!", 4));
+            Assert.AreEqual("This is a test!", Kata.Encrypt("This is a test!", -1));
+            Assert.AreEqual("hskt svr neetn!Ti aai eyitrsig", Kata.Encrypt("This kata is very interesting!", 1));
+        }
+
+        [Test]
+        public void DecryptExampleTests()
+        {
+            Assert.AreEqual("This is a test!", Kata.Decrypt("This is a test!", 0));
+            Assert.AreEqual("This is a test!", Kata.Decrypt("hsi  etTi sats!", 1));
+            Assert.AreEqual("This is a test!", Kata.Decrypt("s eT ashi tist!", 2));
+            Assert.AreEqual("This is a test!", Kata.Decrypt(" Tah itse sits!", 3));
+            Assert.AreEqual("This is a test!", Kata.Decrypt("This is a test!", 4));
+            Assert.AreEqual("This is a test!", Kata.Decrypt("This is a test!", -1));
+            Assert.AreEqual("This kata is very interesting!", Kata.Decrypt("hskt svr neetn!Ti aai eyitrsig", 1));
+        }
+
+        [Test]
+        public void EmptyTests()
+        {
+            Assert.AreEqual("", Kata.Encrypt("", 0));
+            Assert.AreEqual("", Kata.Decrypt("", 0));
+        }
+
+        [Test]
+        public void NullTests()
+        {
+            Assert.AreEqual(null, Kata.Encrypt(null, 0));
+            Assert.AreEqual(null, Kata.Decrypt(null, 0));
+        }
+
         [Test]
         public void ExampleTests()
         {

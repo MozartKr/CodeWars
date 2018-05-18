@@ -7,8 +7,190 @@ using System.Text.RegularExpressions;
 
 namespace KataTest
 {
+    class MorseCodeDecoder
+    {
+        private static Dictionary<string, string> morseCodeTable = new Dictionary<string, string>
+        {
+            {".-", "A"},
+            {"-...", "B"},
+            {"-.-.", "C"},
+            {"-..", "D"},
+            {".", "E"},
+            {"..-.", "F"},
+            {"--.", "G"},
+            {"....", "H"},
+            {"..", "I"},
+            {".---", "J"},
+            {"-.-", "K"},
+            {".-..", "L"},
+            {"--", "M"},
+            {"-.", "N"},
+            {"---", "O"},
+            {".--.", "P"},
+            {"--.-", "Q"},
+            {".-.", "R"},
+            {"...", "S"},
+            {"-", "T"},
+            {"..-", "U"},
+            {"...-", "V"},
+            {".--", "W"},
+            {"-..-", "X"},
+            {"-.--", "Y"},
+            {"--..", "Z"},
+            {"...---...", "SOS"}
+        };
+        
+        public static string Decode(string morseCode)
+        {
+            morseCode = morseCode.Replace("   ", " X ");
+            return string.Concat(morseCode.Split(' ').Select(s => s == "X" ? " " : morseCodeTable[s])).Trim();
+        }
+
+    }
+    public class Dubstep
+    {
+        public static string SongDecoder(string input)
+        {
+            //return Regex.Replace(input, "(WUB)+", " " ).Trim();
+            return string.Join(" ", Regex.Split(input, "WUB").Where(s => !string.IsNullOrWhiteSpace(s)));
+        }
+    }
+
+    public class Persist
+    {
+        public static int Persistence(long n)
+        {
+            if (n < 10) return 0;
+            var digitList = n.ToString().Select(c => Convert.ToInt32(c.ToString()));
+            n = digitList.Aggregate(1L, (current, i) => current * i);
+            return Persistence(n) + 1;
+        }
+    }
+
+    public class ListFilterer
+    {
+        public static IEnumerable<int> GetIntegersFromList(List<object> listOfItems)
+        {
+            return listOfItems.Where(i => i is int).Cast<int>();
+        }
+    }
+
+    public static class JadenCase
+    {
+        public static string ToJadenCase(this string phrase)
+        {
+            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(phrase);
+            //return phrase.Split(' ').Select(s => );
+        }
+    }
+
     public class Kata
     {
+        public static IEnumerable<T> UniqueInOrder<T>(IEnumerable<T> iterable)
+        {
+            var prev = default(T);
+            foreach (var item in iterable)
+            {
+                //if (prev == null || !prev.Equals(item))
+                if (!item.Equals(prev))
+                {
+                    prev = item;
+                    yield return item;
+                }
+            }
+        }
+
+        public static int[] Divisors(int n)
+        {
+            var divisors = new List<int>();
+            var max = (int) Math.Sqrt(n);
+            for (var i = 2; i <= max; i++)
+            {
+                if (n % i != 0) continue;
+                divisors.Add(i);
+                if (i != n / i) divisors.Add(n / i);
+            }
+            return divisors.Count == 0 ? null : divisors.OrderBy(i => i).ToArray();
+        }
+
+        public static string DuplicateEncode(string word)
+        {
+            word = word.ToLower();
+            var duplicateList = new List<char>();
+            foreach (var c in word)
+            {
+                if (word.Count(c1 => c1 == c) > 1)
+                    duplicateList.Add(c);
+            }
+            return string.Concat(word.Select(c => duplicateList.Contains(c) ? ')' : '('));
+        }
+
+        public static bool IsSquare(int n)
+        {
+            if (n < 0) return false;
+            var sqrtValue = Math.Sqrt(n);
+            return sqrtValue.Equals(Math.Floor(sqrtValue));
+        }
+
+        public static string GetMiddle(string s)
+        {
+            return s.Length % 2 == 1 ? 
+                s[s.Length / 2].ToString() :
+                string.Concat(s[s.Length / 2 - 1], s[s.Length / 2]);
+        }
+
+        public static int find_it(int[] seq)
+        {
+            foreach (var i in seq)
+            {
+                if (seq.Count(j => j == i) % 2 == 1) return i;
+            }
+            return -1;
+        }
+
+        public static bool ValidatePin(string pin)
+        {
+            return Regex.IsMatch(pin, @"^(\d{4}|\d{6})$");
+        }
+
+        public static int GetVowelCount(string str)
+        {
+            var vowels = new[] {'a', 'e', 'i', 'o', 'u'};
+            return str.Count(c => vowels.Contains(c));
+        }
+
+        public static bool IsIsogram(string str)
+        {
+            return str.ToLower().Distinct().Count() == str.Length;
+        }
+
+        public static string Encrypt(string text, int n)
+        {
+            if (text == null) return null;
+            if (n <= 0) return text;
+
+            var encryptionText = string.Join("", text.Where((c, i) => i % 2 == 1)) +
+                                 string.Join("", text.Where((c, i) => i % 2 == 0));
+            n--;
+            return n == 0 ? encryptionText : Encrypt(encryptionText, n);
+        }
+
+        public static string Decrypt(string encryptedText, int n)
+        {
+            if (encryptedText == null) return null;
+            if (n <= 0) return encryptedText;
+
+            var decryptionList = encryptedText.Where((c, i) => i >= encryptedText.Length / 2).ToList();
+            var twoList = encryptedText.Where((c, i) => i < encryptedText.Length / 2).ToList();
+            for (var i = 0; i < twoList.Count; i++)
+            {
+                decryptionList.Insert(i * 2 + 1, twoList[i]);
+            }
+            var decryptionText = string.Join("", decryptionList);
+            n--;
+            return n == 0 ? decryptionText : Decrypt(decryptionText, n);
+        }
+
         public static int FindEvenIndex(int[] arr)
         {
             if (arr.Length >= 1000) return -1;
