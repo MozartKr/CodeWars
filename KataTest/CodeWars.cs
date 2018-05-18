@@ -140,13 +140,13 @@ namespace KataTest
                 {
                     var str = urlArrays[i].Replace('?', '.').Replace('#', '.').Split('.')[0];
                     str = str.Length > 30 ? GetShortenStr(str) : str;
-                    listStr.Add($"<span class=\"active\">{str.Replace('-', ' ').ToUpper()}</span>");
+                    listStr.Add(string.Format("<span class=\"active\">{0}</span>", str.Replace('-', ' ').ToUpper()));
                 }
                 else
                 {
                     var originStr = string.Join("/", urlArrays.Where((s, idx) => idx >= 1 & idx <=i));
                     var str = urlArrays[i].Length > 30 ? GetShortenStr(urlArrays[i]) : urlArrays[i];
-                    listStr.Add($"<a href=\"/{originStr}/\">{str.Replace('-', ' ').ToUpper()}</a>");
+                    listStr.Add(string.Format("<a href=\"/{0}/\">{1}</a>", originStr, str.Replace('-', ' ').ToUpper()));
                 }
             }
 
@@ -339,7 +339,7 @@ namespace KataTest
 
             public override string ToString()
             {
-                return $"[{Num}, {SquaredValue}]";
+                return string.Format("[{0}, {1}]", Num, SquaredValue);
             }
         }
 
@@ -347,7 +347,7 @@ namespace KataTest
         {
             public override string ToString()
             {
-                return $"[{string.Join(", ", this)}]";
+                return string.Format("[{0}]", string.Join(", ", this));
             }
         }
 
@@ -382,7 +382,7 @@ namespace KataTest
             var ts = TimeSpan.FromSeconds(seconds);
 
             return ts.TotalDays >= 1
-                ? $"{(int) ts.TotalHours}:{ts:mm\':\'ss}"
+                ? string.Format("{0}:{1:mm\':\'ss}", (int) ts.TotalHours, ts)
                 : ts.ToString("hh':'mm':'ss");
         }
     }
@@ -415,126 +415,6 @@ namespace KataTest
         {
             var numStr = num.Remove(i, 1).Insert(j, num[i].ToString());
             return Convert.ToInt64(numStr);
-        }
-    }
-}
-
-namespace TopDownMovement
-{
-    public enum Direction { Up = 8, Down = 2, Left = 4, Right = 6 }
-
-    public struct Tile
-    {
-        public int X { get; }
-        public int Y { get; }
-
-        public Tile(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-    }
-
-    public static class Input
-    {
-        private static Dictionary<Direction, bool> states = new Dictionary<Direction, bool>();
-       
-        // pressed = true, released = false
-        public static bool GetState(Direction direction)
-        {
-            return states[direction];
-        }
-
-        public static void Press(Direction direction)
-        {
-            states[direction] = true;
-        }
-
-        public static void Release(Direction direction)
-        {
-            states[direction] = false;
-        }
-
-        public static void Clear()
-        {
-            states = new Dictionary<Direction, bool>
-            {
-                {Direction.Up, false},
-                {Direction.Down, false},
-                {Direction.Left, false},
-                {Direction.Right, false}
-            };
-        }
-    }
-
-    public class PlayerMovement
-    {
-        public Tile Position { get; private set; }
-        public Direction Direction { get; private set; }
-        private readonly List<Direction> InputList = new List<Direction>();
-        private readonly Direction[] SortPriority = { Direction.Right, Direction.Left, Direction.Down, Direction.Up };
-
-        public PlayerMovement(int x, int y)
-        {
-            Position = new Tile(x, y);
-        }
-
-        public void Update()
-        {
-            UpdateInputList();
-
-            var topPriorityDirection = GetTopPriorityDirectionToInput();
-            if (topPriorityDirection == 0) return;
-
-            if (Direction != topPriorityDirection)
-            {
-                Direction = topPriorityDirection;
-            }
-            else
-            {
-                Move(Direction);
-            }
-            InputList.Remove(Direction);
-        }
-
-        public void Move(Direction direction)
-        {
-            var x = 0;
-            var y = 0;
-
-            switch (direction)
-            {
-                case Direction.Up:
-                    y += 1;
-                    break;
-                case Direction.Down:
-                    y -= 1;
-                    break;
-                case Direction.Left:
-                    x -= 1;
-                    break;
-                case Direction.Right:
-                    x += 1;
-                    break;
-            }
-
-            Position = new Tile(Position.X+x, Position.Y+y);
-        }
-
-        public Direction GetTopPriorityDirectionToInput()
-        {
-            return InputList.Count > 0 ? InputList.LastOrDefault() : Direction;
-        }
-
-        public void UpdateInputList()
-        {
-            foreach (var direction in SortPriority)
-            {
-                if (Input.GetState(direction) & Direction != direction)
-                {
-                    InputList.Add(direction);
-                }
-            }
         }
     }
 }
