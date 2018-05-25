@@ -6,6 +6,110 @@ using NUnit.Framework;
 namespace KataTest
 {
     [TestFixture]
+    public class RemoveSmallestTests
+    {
+        private static void Tester(List<int> argument, List<int> expectedResult)
+        {
+            CollectionAssert.AreEqual(expectedResult, Remover.RemoveSmallest(argument));
+        }
+        [Test]
+        public static void BasicTests()
+        {
+            Tester(new List<int> { 1, 2, 3, 4, 5 }, new List<int> { 2, 3, 4, 5 });
+            Tester(new List<int> { 5, 3, 2, 1, 4 }, new List<int> { 5, 3, 2, 4 });
+            Tester(new List<int> { 1, 2, 3, 1, 1 }, new List<int> { 2, 3, 1, 1 });
+            Tester(new List<int>(), new List<int>());
+        }
+    }
+
+    [TestFixture]
+    public class AddBinaryTest
+    {
+        [Test]
+        public void TestExample()
+        {
+            Assert.AreEqual("11", Kata.AddBinary(1, 2), "Should return \"11\" for 1 + 2");
+        }
+    }
+
+    [TestFixture]
+    public class StockListTests
+    {
+
+        [Test]
+        public void Test1()
+        {
+            string[] art = new string[] { "ABAR 200", "CDXE 500", "BKWR 250", "BTSQ 890", "DRTY 600" };
+            String[] cd = new String[] { "A", "B" };
+            Assert.AreEqual("(A : 200) - (B : 1140)", StockList.stockSummary(art, cd));
+        }
+    }
+
+    [TestFixture]
+    public class ExpressionsMatter
+    {
+        [TestCase(6, 2, 1, 2)]
+        [TestCase(3, 1, 1, 1)]
+        [TestCase(4, 2, 1, 1)]
+        [TestCase(9, 1, 2, 3)]
+        [TestCase(5, 1, 3, 1)]
+        [TestCase(8, 2, 2, 2)]
+        public void CheckSmallValues(int expected, params int[] a)
+        {
+            Assert.That(Kata.ExpressionsMatter(a[0], a[1], a[2]), Is.EqualTo(expected));
+        }
+        [TestCase(020, 5, 1, 3)]
+        [TestCase(105, 3, 5, 7)]
+        [TestCase(035, 5, 6, 1)]
+        [TestCase(008, 1, 6, 1)]
+        [TestCase(014, 2, 6, 1)]
+        [TestCase(048, 6, 7, 1)]
+        public void CheckIntermediateValues(int expected, params int[] a)
+        {
+            Assert.That(Kata.ExpressionsMatter(a[0], a[1], a[2]), Is.EqualTo(expected));
+        }
+        [TestCase(060, 02, 10, 03)]
+        [TestCase(027, 01, 08, 03)]
+        [TestCase(126, 09, 07, 02)]
+        [TestCase(020, 01, 01, 10)]
+        [TestCase(018, 09, 01, 01)]
+        [TestCase(300, 10, 05, 06)]
+        [TestCase(012, 01, 10, 01)]
+        public void CheckMixedValues(int expected, params int[] a)
+        {
+            Assert.That(Kata.ExpressionsMatter(a[0], a[1], a[2]), Is.EqualTo(expected));
+        }
+    }
+
+    [TestFixture]
+    public static class SumDigPowerTests
+    {
+
+        private static string Array2String(long[] list)
+        {
+            return "[" + string.Join(", ", list) + "]";
+        }
+        private static void testing(long a, long b, long[] res)
+        {
+            Assert.AreEqual(Array2String(res),
+                Array2String(SumDigPower.SumDigPow(a, b)));
+        }
+        [Test]
+        public static void test1()
+        {
+            Console.WriteLine("Basic Tests SumDigPow");
+            testing(1, 10, new long[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+            testing(1, 100, new long[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 89 });
+            testing(10, 100, new long[] { 89 });
+            testing(90, 100, new long[] { });
+            testing(90, 150, new long[] { 135 });
+            testing(50, 150, new long[] { 89, 135 });
+            testing(10, 150, new long[] { 89, 135 });
+
+        }
+    }
+
+    [TestFixture]
     public class MorseCodeDecoderTests
     {
         [Test]
@@ -46,6 +150,12 @@ namespace KataTest
     [TestFixture]
     public class Tests
     {
+        [Test]
+        public void World()
+        {
+            Assert.AreEqual("dlrow", Kata.Solution("world"));
+        }
+
         [Test]
         public static void ShouldWorkForSomeExamples()
         {
@@ -153,6 +263,21 @@ namespace KataTest
     public class KataTests
     {
         [Test]
+        public void Test1()
+        {
+            string[] expected = { "Ryan", "Mark" };
+            string[] names = { "Ryan", "Kieran", "Mark", "Jimmy" };
+            CollectionAssert.AreEqual(expected, Kata.FriendOrFoe(names));
+        }
+
+        [Test]
+        public void ExampleTestsFindMissingLetter()
+        {
+            Assert.AreEqual('e', Kata.FindMissingLetter(new[] { 'a', 'b', 'c', 'd', 'f' }));
+            Assert.AreEqual('P', Kata.FindMissingLetter(new[] { 'O', 'Q', 'R', 'S' }));
+
+        }
+        [Test]
         public void DuplicateEncodeTests()
         {
             Assert.AreEqual("(((", Kata.DuplicateEncode("din"));
@@ -211,6 +336,24 @@ namespace KataTest
     [TestFixture]
     public class SolutionTest
     {
+        [Test]
+        public void ExampleTest()
+        {
+            double[] array = new double[] { 17, 16, 16, 16, 16, 15, 17, 17, 15, 5, 17, 17, 16 };
+            Assert.AreEqual(200.0 / 13.0, AverageSolution.FindAverage(array));
+
+            // Should return 0 on empty array
+            Assert.AreEqual(0, AverageSolution.FindAverage(new double[] { }));
+        }
+
+        [Test, Description("Sample Tests")]
+        public void SampleTestOrder()
+        {
+            Assert.AreEqual("Thi1s is2 3a T4est", Kata.Order("is2 Thi1s T4est 3a"));
+            Assert.AreEqual("Fo1r the2 g3ood 4of th5e pe6ople", Kata.Order("4of Fo1r pe6ople g3ood th5e the2"));
+            Assert.AreEqual("", Kata.Order(""));
+        }
+
         [Test]
         public void EmptyTest()
         {
@@ -532,6 +675,17 @@ namespace KataTest
     [TestFixture]
     public class KataTest
     {
+        [Test]
+        public void KataTestsDuplicateCount()
+        {
+            Assert.AreEqual(0, Kata.DuplicateCount(""));
+            Assert.AreEqual(0, Kata.DuplicateCount("abcde"));
+            Assert.AreEqual(2, Kata.DuplicateCount("aabbcde"));
+            Assert.AreEqual(2, Kata.DuplicateCount("aabBcde"), "should ignore case");
+            Assert.AreEqual(1, Kata.DuplicateCount("Indivisibility"));
+            Assert.AreEqual(2, Kata.DuplicateCount("Indivisibilities"), "characters may not be adjacent");
+        }
+
         [Test]
         public void KataTests()
         {

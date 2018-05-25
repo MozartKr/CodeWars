@@ -7,6 +7,73 @@ using System.Text.RegularExpressions;
 
 namespace KataTest
 {
+    class AverageSolution
+    {
+        public static double FindAverage(double[] array)
+        {
+            return array.Length > 0 ? array.Average() : 0.0;
+        }
+    } 
+
+    public class Remover
+    {
+        public static List<int> RemoveSmallest(List<int> numbers)
+        {
+            //numbers.Remove(numbers.FirstOrDefault(i => numbers.Min() == i));
+            numbers.Remove(numbers.DefaultIfEmpty().Min());
+            return numbers;
+        }
+    }
+
+    public class StockList
+    {
+        class Art
+        {
+            public string Name { get; set; }
+            public int Count { get; set; }
+        }
+
+        class Stock
+        {
+            public char Key { get; set; }
+            public int Count { get; set; }
+
+            public override string ToString()
+            {
+                return string.Format("({0} : {1})", Key, Count);
+            }
+        }
+
+        public static string stockSummary(String[] lstOfArt, String[] lstOf1stLetter)
+        {
+            var artList = lstOfArt.Select(s => s.Split(' ')).Select(artInfo => new Art {Name = artInfo[0], Count = Convert.ToInt32(artInfo[1])}).ToList();
+            var stockList = lstOf1stLetter.Select(s => new Stock {Key = Convert.ToChar(s)}).ToList();
+
+            foreach (Art art in artList)
+            {
+                var findStock = stockList.Find(stock => stock.Key == art.Name[0]);
+                if (findStock != null) findStock.Count += art.Count;
+            }
+
+            return stockList.Any(stock => stock.Count > 0) ? string.Join(" - ", stockList) : string.Empty;
+        }
+    }
+
+    public class SumDigPower
+    {
+        public static long[] SumDigPow(long a, long b)
+        {
+            var listNum = new List<long>();
+            for (var i = a; i <= b; i++)
+            {
+                var strInt = i.ToString();
+                var sum = strInt.Select((x, idx) => (int)Math.Pow(Convert.ToInt32(x.ToString()), idx+1)).Sum();
+                if (i == sum) listNum.Add(i);
+            }
+            return listNum.ToArray();
+        }
+    }
+
     class MorseCodeDecoder
     {
         private static Dictionary<string, string> morseCodeTable = new Dictionary<string, string>
@@ -51,7 +118,6 @@ namespace KataTest
     {
         public static string SongDecoder(string input)
         {
-            //return Regex.Replace(input, "(WUB)+", " " ).Trim();
             return string.Join(" ", Regex.Split(input, "WUB").Where(s => !string.IsNullOrWhiteSpace(s)));
         }
     }
@@ -86,6 +152,67 @@ namespace KataTest
 
     public class Kata
     {
+        public static string Solution(string str)
+        {
+            return new string(str.Reverse().ToArray());
+        }
+
+        public static int DuplicateCount(string str)
+        {
+            //return str.ToLower().ToList().Distinct().Count(c => str.ToLower().Count(c1 => c == c1) > 1);
+            return str.ToLower().GroupBy(c => c).Count(g => g.Count() > 1);
+        }
+
+        public static string AddBinary(int a, int b)
+        {
+            return Convert.ToString(a + b, 2);
+        }
+
+        public static int ExpressionsMatter(int a, int b, int c)
+        {
+            return GetCalcResults(a, b, c).Max();
+        }
+
+        private static IEnumerable<int> GetCalcResults(int a, int b, int c)
+        {
+            yield return a * (b + c);
+            yield return a * b * c;
+            yield return a + b * c;
+            yield return (a + b) * c;
+            yield return a + b + c;
+        }
+
+        public static IEnumerable<string> FriendOrFoe(string[] names)
+        {
+            return names.Where(name => name.Length == 4);
+        }
+
+        public static string Order(string words)
+        {
+            //var sortedWords = words.Split(' ').OrderBy(s => char.GetNumericValue(s[s.IndexOfAny(s.Where(char.IsDigit).ToArray())]));
+            var sortedWords = words.Split(' ').OrderBy(s => s.ToList().Find(char.IsDigit));
+            return string.IsNullOrWhiteSpace(words) ? words : string.Join(" ", sortedWords);
+        }
+
+        public static string CreatePhoneNumber(int[] numbers)
+        {
+            //return string.Format("({0}{1}{2}) {3}{4}{5}-{6}{7}{8}{9}",
+            //    numbers[0], numbers[1], numbers[2], numbers[3], numbers[4], numbers[5], numbers[6], numbers[7], numbers[8], numbers[9]);
+
+            return new Regex("(...)(...)(....)").Replace(String.Concat(numbers), "($1) $2-$3");
+        }
+
+        public static char FindMissingLetter(char[] array)
+        {
+            for (var i = 0; i < array.Length-1; i++)
+            {
+                var ascilValue = (int) array[i];
+                var ascilValueCompare = (int) array[i + 1];
+                if (ascilValue + 1 != ascilValueCompare) return (char) (ascilValue + 1);
+            }
+            return ' ';
+        }
+
         public static IEnumerable<T> UniqueInOrder<T>(IEnumerable<T> iterable)
         {
             var prev = default(T);
