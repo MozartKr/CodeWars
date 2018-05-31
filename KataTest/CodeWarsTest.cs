@@ -1,10 +1,257 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using NUnit.Framework;
+
+namespace ItemCounterKata
+{
+    [TestFixture]
+    public class ExampleTests
+    {
+
+        [Test]
+        public void GivenACallToConstructor_WhenPassedNullArgument_ThrowsArgumentNullException()
+        {
+            // ACT
+            TestDelegate testDelegate = delegate { new ItemCounter<string>(null); };
+
+            // ASSERT
+            Assert.Throws<ArgumentNullException>(testDelegate);
+        }
+
+        [Test]
+        public void DistinctItems_AfterConstructionWithEmptyArray_IsZero()
+        {
+            // ARRANGE
+            var items = new string[] { };
+            var counter = new ItemCounter<string>(items);
+
+            // ACT
+            var actualCount = counter.DistinctItems;
+
+            // ASSERT
+            Assert.AreEqual(0, actualCount);
+        }
+
+        [Test]
+        public void DistinctItems_AfterConstructionWithTwoSameItemsArray_IsOne()
+        {
+            // ARRANGE
+            var items = new[] { "Apple", "Apple" };
+            var counter = new ItemCounter<string>(items);
+
+            // ACT
+            var actualCount = counter.DistinctItems;
+
+            // ASSERT
+            Assert.AreEqual(1, actualCount);
+        }
+
+        [Test]
+        public void DistinctItems_AfterConstructionWithTwoDifferentItemsArray_IsTwo()
+        {
+            // ARRANGE
+            var items = new[] { "Apple", "Orange" };
+            var counter = new ItemCounter<string>(items);
+
+            // ACT
+            var actualCount = counter.DistinctItems;
+
+            // ASSERT
+            Assert.AreEqual(2, actualCount);
+        }
+
+
+        [Test]
+        public void DistinctItems_AfterConstructionWithThreeItemsTwoSameAndOneDifferen_IsTwo()
+        {
+            // ARRANGE
+            var items = new[] { "Apple", "Orange", "Apple", };
+            var counter = new ItemCounter<string>(items);
+
+            // ACT
+            var actualCount = counter.DistinctItems;
+
+            // ASSERT
+            Assert.AreEqual(2, actualCount);
+        }
+
+        [Test]
+        public void GetCount_AfterConstructionWithTwoSameItemsArray_IsTwo()
+        {
+            // ARRANGE
+            var item1 = "Apple";
+            var item2 = item1;
+            var items = new[] { item1, item2 };
+            var counter = new ItemCounter<string>(items);
+
+            // ACT
+            var actualCount = counter.GetCount(item1);
+
+            // ASSERT
+            Assert.AreEqual(2, actualCount);
+        }
+
+        [Test]
+        public void GetCount_AfterConstructionWithTwoDifferentItemsArray_IsOne()
+        {
+            // ARRANGE
+            var item1 = "Apple";
+            var item2 = "Banana";
+            var items = new[] { item1, item2 };
+            var counter = new ItemCounter<string>(items);
+
+            // ACT
+            var actualCount = counter.GetCount(item1);
+
+            // ASSERT
+            Assert.AreEqual(1, actualCount);
+        }
+
+        [Test]
+        public void GetCount_WhenSpecifyingNonExistingItem_ThrowsException()
+        {
+            // ARRANGE
+            var items = new[] { "Apple", "Apple" };
+            var counter = new ItemCounter<string>(items);
+
+            // ACT
+            TestDelegate testDelegate = delegate { counter.GetCount("Pear"); };
+
+            // ASSERT
+            Assert.Throws<InvalidOperationException>(testDelegate);
+        }
+
+        [Test]
+        public void GetCount_WhenSpecifyingNullItem_ThrowsException()
+        {
+            // ARRANGE
+            var items = new[] { "Apple", "Apple" };
+            var counter = new ItemCounter<string>(items);
+
+            // ACT
+            TestDelegate testDelegate = delegate { counter.GetCount(null); };
+
+            // ASSERT
+            Assert.Throws<ArgumentNullException>(testDelegate);
+        }
+
+        [Test]
+        public void HasItem_WhenItemExists_ReturnsTrue()
+        {
+            // ARRANGE
+            var item = "Apple";
+            var items = new[] { item };
+            var counter = new ItemCounter<string>(items);
+
+            // ACT
+            var actual = counter.HasItem(item);
+
+            // ASSERT
+            Assert.IsTrue(actual);
+        }
+
+        [Test]
+        public void HasItem_WhenItemDoesNotExist_ReturnsFalse()
+        {
+            // ARRANGE
+            var item1 = "Apple";
+            var item2 = "Pear";
+            var items = new[] { item1 };
+            var counter = new ItemCounter<string>(items);
+
+            // ACT
+            var actual = counter.HasItem(item2);
+
+            // ASSERT
+            Assert.IsFalse(actual);
+        }
+    }
+}
 
 namespace KataTest
 {
+    [TestFixture]
+    public class DiamondTest
+    {
+        [Test]
+        public void TestDiamond3()
+        {
+            var expected = new StringBuilder();
+            expected.Append(" *\n");
+            expected.Append("***\n");
+            expected.Append(" *\n");
+
+            Assert.AreEqual(expected.ToString(), Diamond.print(3));
+        }
+
+        [Test]
+        public void TestDiamond5()
+        {
+            var expected = new StringBuilder();
+            expected.Append("  *\n");
+            expected.Append(" ***\n");
+            expected.Append("*****\n");
+            expected.Append(" ***\n");
+            expected.Append("  *\n");
+
+            Assert.AreEqual(expected.ToString(), Diamond.print(5));
+        }
+    }
+
+    [TestFixture]
+    public class NextBiggerNumberTests
+    {
+        [Test]
+        public void Test1()
+        {
+            Console.WriteLine("****** Small Number");
+            Assert.AreEqual(21, Kata.NextBiggerNumber(12));
+            Assert.AreEqual(531, Kata.NextBiggerNumber(513));
+            Assert.AreEqual(2071, Kata.NextBiggerNumber(2017));
+            Assert.AreEqual(441, Kata.NextBiggerNumber(414));
+            Assert.AreEqual(414, Kata.NextBiggerNumber(144));
+        }
+    }
+
+    [TestFixture]
+    public class Sample_Test
+    {
+        private static IEnumerable<TestCaseData> testCases
+        {
+            get
+            {
+                yield return new TestCaseData(1)
+                    .Returns(true)
+                    .SetDescription("1 is narcissitic");
+                yield return new TestCaseData(371)
+                    .Returns(true)
+                    .SetDescription("371 is narcissitic");
+            }
+        }
+  
+        [Test, TestCaseSource("testCases")]
+        public bool Test(int n)
+        {
+            return Kata.Narcissistic(n);
+        } 
+    }
+
+    [TestFixture]
+    public class BitCounting
+    {
+        [Test]
+        public void CountBits()
+        {
+            Assert.AreEqual(0, Kata.CountBits(0));
+            Assert.AreEqual(1, Kata.CountBits(4));
+            Assert.AreEqual(3, Kata.CountBits(7));
+            Assert.AreEqual(2, Kata.CountBits(9));
+            Assert.AreEqual(2, Kata.CountBits(10));
+        }
+    }
+
     [TestFixture]
     public class RemoveSmallestTests
     {
@@ -150,6 +397,80 @@ namespace KataTest
     [TestFixture]
     public class Tests
     {
+        [Test]
+        public void test1rowSumOddNumbers()
+        {
+            Assert.AreEqual(125, Kata.rowSumOddNumbers(5));
+            Assert.AreEqual(74088, Kata.rowSumOddNumbers(42));
+        }
+
+        [Test]
+        public void test1HumanTimeFormat()
+        {
+            Assert.AreEqual("now", HumanTimeFormat.formatDuration(0));
+        }
+
+        [Test]
+        public void test2HumanTimeFormat()
+        {
+            Assert.AreEqual("1 second", HumanTimeFormat.formatDuration(1));
+        }
+
+        [Test]
+        public void test3HumanTimeFormat()
+        {
+            Assert.AreEqual("1 minute and 2 seconds", HumanTimeFormat.formatDuration(62));
+        }
+
+        [Test]
+        public void test4HumanTimeFormat()
+        {
+            Assert.AreEqual("2 minutes", HumanTimeFormat.formatDuration(120));
+        }
+
+        [Test]
+        public void test5HumanTimeFormat()
+        {
+            Assert.AreEqual("1 hour, 1 minute and 2 seconds", HumanTimeFormat.formatDuration(3662));
+        }
+
+        [Test]
+        public static void Test1Find()
+        {
+            int[] exampleTest1 = { 2, 6, 8, -10, 3 };
+            Assert.IsTrue(3 == Kata.Find(exampleTest1));
+        }
+
+        [Test]
+        public static void Test2Find()
+        {
+            int[] exampleTest2 = { 206847684, 1056521, 7, 17, 1901, 21104421, 7, 1, 35521, 1, 7781 };
+            Assert.IsTrue(206847684 == Kata.Find(exampleTest2));
+        }
+
+        [Test]
+        public static void Test3Find()
+        {
+            int[] exampleTest3 = { int.MaxValue, 0, 1 };
+            Assert.IsTrue(0 == Kata.Find(exampleTest3));
+        }
+
+        [Test]
+        public void Test1HighAndLow()
+        {
+            Assert.AreEqual("42 -9", Kata.HighAndLow("8 3 -5 42 -1 0 0 -9 4 7 4 -4"));
+        }
+
+        [Test]
+        public void Test1()
+        {
+            StringAssert.AreEqualIgnoringCase("loquen", Kata.Remove_char("eloquent"));
+            StringAssert.AreEqualIgnoringCase("ountr", Kata.Remove_char("country"));
+            StringAssert.AreEqualIgnoringCase("erso", Kata.Remove_char("person"));
+            StringAssert.AreEqualIgnoringCase("lac", Kata.Remove_char("place"));
+            StringAssert.AreEqualIgnoringCase("", Kata.Remove_char("ok"));
+        }
+
         [Test]
         public void World()
         {
@@ -336,6 +657,59 @@ namespace KataTest
     [TestFixture]
     public class SolutionTest
     {
+        [Test]
+        public void SimpleArray1()
+        {
+            Assert.AreEqual(2, Solution.Stray(new int[] { 1, 1, 2 }));
+        }
+
+        [Test]
+        public void Test()
+        {
+            Assert.AreEqual(new int[] { 1, 2, 1, 1, 3, 1, 0, 0, 0, 0 }, Kata.MoveZeroes(new int[] { 1, 2, 0, 1, 0, 1, 0, 3, 0, 1 }));
+        }
+
+        [Test]
+        public void SampleTestReverseSeq()
+        {
+            Assert.That(Kata.ReverseSeq(5), Is.EqualTo(new int[] { 5, 4, 3, 2, 1 }));
+        }
+
+        [Test, Description("It should return correct text")]
+        public void SampleTestLikes()
+        {
+            Assert.AreEqual("no one likes this", Kata.Likes(new string[0]));
+            Assert.AreEqual("Peter likes this", Kata.Likes(new string[] { "Peter" }));
+            Assert.AreEqual("Jacob and Alex like this", Kata.Likes(new string[] { "Jacob", "Alex" }));
+            Assert.AreEqual("Max, John and Mark like this", Kata.Likes(new string[] { "Max", "John", "Mark" }));
+            Assert.AreEqual("Alex, Jacob and 2 others like this", Kata.Likes(new string[] { "Alex", "Jacob", "Mark", "Max" }));
+        }
+
+        [Test]
+        public void SampleTestAlphabetPosition()
+        {
+            Assert.AreEqual("20 8 5 19 21 14 19 5 20 19 5 20 19 1 20 20 23 5 12 22 5 15 3 12 15 3 11", Kata.AlphabetPosition("The sunset sets at twelve o' clock."));
+            Assert.AreEqual("20 8 5 14 1 18 23 8 1 12 2 1 3 15 14 19 1 20 13 9 4 14 9 7 8 20", Kata.AlphabetPosition("The narwhal bacons at midnight."));
+        }
+
+        [Test]
+        public void SampleTest1()
+        {
+            Assert.AreEqual(true, Parentheses.ValidParentheses("()"));
+        }
+
+        [Test]
+        public void SampleTest2()
+        {
+            Assert.AreEqual(false, Parentheses.ValidParentheses(")(((("));
+        }
+
+        [Test]
+        public void SampleTest3()
+        {
+            Assert.AreEqual(true, Parentheses.ValidParentheses("(())((()())())"));
+        }
+
         [Test]
         public void ExampleTest()
         {

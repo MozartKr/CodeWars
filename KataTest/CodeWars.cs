@@ -2,11 +2,135 @@
 using System.Collections;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+namespace ItemCounterKata
+{
+    public class ItemCounter<T>
+    {
+        private readonly Dictionary<T, int> _itemCounts = new Dictionary<T, int>();
+
+        public int DistinctItems
+        {
+            get { return _itemCounts.Keys.Count; }
+        }
+
+        public int GetCount(T item)
+        {
+            if (_itemCounts.ContainsKey(item)) return _itemCounts[item];
+            throw new InvalidOperationException();
+        }
+
+        public bool HasItem(T item)
+        {
+            return _itemCounts.ContainsKey(item);
+        }
+
+        public ItemCounter(T[] items)
+        {
+            if (items == null) throw new ArgumentNullException();
+
+            foreach (var item in items)
+            {
+                if (_itemCounts.ContainsKey(item)) _itemCounts[item]++;
+                else _itemCounts.Add(item, 1);
+            }
+        }
+    }
+}
+
 namespace KataTest
 {
+    public class HumanTimeFormat
+    {
+        public static string formatDuration(int seconds)
+        {
+            if (seconds == 0) return "now";
+
+            var ts = TimeSpan.FromSeconds(seconds);
+
+            var years = ts.Days >= 365 ? ts.Days / 365 : 0;
+            var days = ts.Days >= 365 ? ts.Days % 365 : ts.Days;
+
+            var partLists = new List<string>
+            {
+                GetPart(years, "year"),
+                GetPart(days, "day"),
+                GetPart(ts.Hours, "hour"),
+                GetPart(ts.Minutes, "minute"),
+                GetPart(ts.Seconds, "second")
+            };
+
+            partLists = partLists.Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+
+            if (partLists.Count == 1) return partLists.First();
+            if (partLists.Count == 2) return string.Join(" and ", partLists);
+            
+            var result = string.Join(", ", partLists.Take(partLists.Count - 1));
+            result = string.Format("{0} and {1}", result, partLists.Last());
+            return result;
+        }
+
+        public static string GetPart(int count, string unit)
+        {
+            if (count == 0) return string.Empty;
+            if (count == 1) return string.Format("{0} {1}", count, unit);
+            return string.Format("{0} {1}s", count, unit); 
+        }
+    }
+
+    class Solution
+    {
+        public static int Stray(int[] numbers)
+        {
+            return numbers.GroupBy(i => i).First(ints => ints.Count() == 1).Key;
+            //Array.Sort(numbers);
+            //return numbers[0] == numbers[1] ? numbers.Last() : numbers.First();
+        }
+    }
+
+    public class Diamond
+    {
+        public static string print(int n)
+        {
+            if (n % 2 == 0 | n < 0) return null;
+
+            var diamond = string.Empty;
+            for (var i = 1; i <= n; i+=2)
+            {
+                var whitespace = string.Empty.PadLeft((n - i) / 2);
+                var line = whitespace.PadRight(whitespace.Length + i, '*') + "\n";
+                diamond += line;
+            }
+
+            for (var i = n-2; i >= 1; i-=2)
+            {
+                var whitespace = string.Empty.PadLeft((n - i) / 2);
+                var line = whitespace.PadRight(whitespace.Length + i, '*') + "\n";
+                diamond += line;
+            }
+
+            return diamond;
+        }
+    }
+
+    public class Parentheses
+    {
+        public static bool ValidParentheses(string input)
+        {
+            input = string.Concat(input.Where(c => c == '(' | c == ')'));
+            while (true)
+            {
+                if (input.Contains("()"))
+                    input = input.Replace("()", "");
+                else
+                    return input.Length == 0;
+            }
+        }
+    }
+
     class AverageSolution
     {
         public static double FindAverage(double[] array)
@@ -152,6 +276,150 @@ namespace KataTest
 
     public class Kata
     {
+        public static long rowSumOddNumbers(long n)
+        {
+            return n * n * n;
+            //var maxIdx = Enumerable.Range(1, (int) n).Sum() - 1;
+            //var sum = 0;
+            //for (var i = 0; i < n; i++)
+            //{
+            //    var value = (maxIdx - i) * 2 + 1;
+            //    sum += value;
+            //}
+            //return sum;
+        }
+
+        public static int[] MoveZeroes(int[] arr)
+        {
+            var moveZeros = arr.Where(i => i != 0).ToList();
+            var zeros = arr.Where(i => i == 0).ToList();
+            moveZeros.AddRange(zeros);
+            return moveZeros.ToArray();
+        }
+
+        public static int[] ReverseSeq(int n)
+        {
+            return Enumerable.Range(1, n).Reverse().ToArray();
+
+        }
+
+        public static string Likes(string[] name)
+        {
+            string names;
+            switch (name.Length)
+            {
+                case 0 :
+                    names = "no one";
+                    break;
+                case 1:
+                    names = name[0];
+                    break;
+                case 2:
+                    names = string.Join(" and ", name);
+                    break;
+                case 3:
+                    names = string.Format("{0}, {1} and {2}", name);
+                    break;
+                default:
+                    names = string.Format("{0}, {1} and {2} others", name[0], name[1], name.Length - 2);
+                    break;
+            }
+            return string.Format("{0} {1} this", names, name.Length > 1 ? "like" : "likes");
+        }
+
+        public static int Find(int[] integers)
+        {
+            var oddGroup = integers.Where(i => i % 2 == 1).ToArray();
+            var evenGroup = integers.Where(i => i % 2 == 0).ToArray();
+            return oddGroup.Length == 1 ? oddGroup.First() : evenGroup.First();
+        }
+
+        public static string AlphabetPosition(string text)
+        {
+            return string.Join(" ", text.ToLower().Where(char.IsLetter).Select(c => (int)c-96));
+        }
+
+        public static long NextBiggerNumber(long n)
+        {
+            String str = GetNumbers(n);
+            for (long i = n + 1; i <= long.Parse(str); i++)
+            {
+                if (GetNumbers(n) == GetNumbers(i))
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        public static string GetNumbers(long number)
+        {
+            return string.Join("", number.ToString().ToCharArray().OrderByDescending(x => x));
+        }
+
+        private static readonly List<string> Combinations = new List<string>();
+        //public static long NextBiggerNumber(long n)
+        //{
+        //    Combinations.Clear();
+        //    GetPermutations(n.ToString().ToList(), 0);
+        //    var orderedCombinations = Combinations.Select(s => Convert.ToInt32(s)).Distinct().OrderBy(i => i).ToList();
+        //    var findIdx = orderedCombinations.FindIndex(i => i == (int) n);
+        //    var findNextBigger = orderedCombinations.ElementAt(findIdx+1);
+        //    return findNextBigger;
+        //}
+
+        private static void GetPermutations(IList<char> array, int currentIdx)
+        {
+            if (currentIdx == array.Count-1)
+                Combinations.Add(string.Concat(array));
+
+            for (var i = currentIdx; i < array.Count; i++)
+            {
+                Swap(array, i, currentIdx);
+                GetPermutations(array, currentIdx + 1);
+                Swap(array, i, currentIdx);
+            }
+        }
+
+        private static void Swap(IList<char> array, int from, int to)
+        {
+            var tmp = array[from];
+            array[from] = array[to];
+            array[to] = tmp;
+        }
+
+        public static bool Narcissistic(int value)
+        {
+            var digits = value.ToString().Length;
+            return value.ToString().Select(c => Math.Pow(char.GetNumericValue(c), digits)).Sum().Equals(value);
+        }
+
+        public static string HighAndLow(string numbers)
+        {
+            return string.Format("{0} {1}",
+                numbers.Split(' ').Select(s => Convert.ToInt32(s)).Max(),
+                numbers.Split(' ').Select(s => Convert.ToInt32(s)).Min());
+        }
+
+        public static int GetUnique(IEnumerable<int> numbers)
+        {
+            var ints = numbers.ToList();
+            foreach (var number in ints)
+            {
+                if (ints.Count(i => i == number) == 1) return number;
+            }
+            return -1;
+        }
+
+        public static string Remove_char(string s)
+        {
+            return s.Substring(1, s.Length - 2);
+        }
+
+        public static int CountBits(int n)
+        {
+            return Convert.ToString(n, 2).Count(c => c.Equals('1'));
+        }
+
         public static string Solution(string str)
         {
             return new string(str.Reverse().ToArray());
