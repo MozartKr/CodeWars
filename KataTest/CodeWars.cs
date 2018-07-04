@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Globalization;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -43,6 +42,85 @@ namespace ItemCounterKata
 
 namespace KataTest
 {
+
+    public class PaulCipher
+    {
+        public static string Encode(string input)
+        {
+            return string.IsNullOrWhiteSpace(input) ? string.Empty : string.Concat(GetEncode(input.ToUpper()));
+        }
+
+        private static IEnumerable<char> GetEncode(string input)
+        {
+            var prevAlphaIdx = 0;
+            if (char.IsLetter(input[0])) prevAlphaIdx = input[0] - 'A' + 1;
+            yield return input[0];
+            foreach (var c in input.Skip(1))
+            {
+                if (!char.IsLetter(c)) yield return c;
+                else
+                {
+                    var idx = c - 'A' + prevAlphaIdx;
+                    if (idx >= 26) idx -= 26;
+                    yield return Convert.ToChar(idx + 'A');
+                    prevAlphaIdx = c - 'A' + 1;
+                }
+            }
+        }
+
+        public static string Decode(string input)
+        {
+            return string.IsNullOrWhiteSpace(input) ? string.Empty : string.Concat(GetDecode(input.ToUpper()));
+        }
+
+        private static IEnumerable<char> GetDecode(string input)
+        {
+            var prevAlphaIdx = 0;
+            if (char.IsLetter(input[0])) prevAlphaIdx = input[0] - 'A' + 1;
+            yield return input[0];
+            foreach (var c in input.Skip(1))
+            {
+                if (!char.IsLetter(c)) yield return c;
+                else
+                {
+                    var idx = c - 'A' - prevAlphaIdx;
+                    if (idx <= -1) idx += 26;
+                    yield return Convert.ToChar(idx + 'A');
+                    prevAlphaIdx = idx + 1;
+                }
+            }
+        }
+    }
+
+    public static class SumOfK
+    {
+        public static int? chooseBestSum(int t, int k, List<int> ls)
+        {
+            var maximumDistance = t;
+            var numOfTown = k;
+            if (numOfTown > ls.Count) return null;
+            var sum = GetPermutations(ls, numOfTown).Select(ints => ints.Sum()).OrderBy(i => i).LastOrDefault(i => i <= maximumDistance);
+            return sum == 0 ? (int?) null : sum;
+        }
+
+        static IEnumerable<IEnumerable<T>> GetPermutations<T>(IEnumerable<T> items, int count)
+        {
+            int i = 0;
+            foreach (var item in items)
+            {
+                if (count == 1) 
+                    yield return new T[] { item };
+                else
+                {
+                    foreach (var result in GetPermutations(items.Skip(i + 1), count - 1))
+                        yield return new T[] { item }.Concat(result);
+                }
+
+                ++i;
+            }
+        }
+    }
+
     public class HumanTimeFormat
     {
         public static string formatDuration(int seconds)
@@ -276,6 +354,53 @@ namespace KataTest
 
     public class Kata
     {
+        public static string DeNico(string key, string message)
+        {
+            var sortLetters = key.OrderBy(c => c).ToList();
+            var sortLettersIdx = key.Select(c => sortLetters.IndexOf(c)+1).ToList();
+            var charArray = new char[message.Length];
+            for (var i = 0; i < message.Length; i++)
+            {
+                var row = i / key.Length;
+                var idx = i % key.Length + 1;
+                charArray[sortLettersIdx.IndexOf(idx) + row * key.Length] = message[i];
+            }
+            return new string(charArray).Trim();
+        }
+
+        public static string Factorial(int n)
+        {
+            var factorialStr = "1";
+            foreach (var i in Enumerable.Range(1, n))
+            {
+                if (!string.IsNullOrWhiteSpace(factorialStr)) 
+                    factorialStr = factorialStr.Replace(".", string.Empty).Insert(factorialStr.Length / 2, ".");
+
+                var f = Convert.ToDecimal(factorialStr);
+                f *= i;
+
+                factorialStr = f.ToString();
+            }
+
+            return factorialStr.Replace(".", string.Empty);
+        }
+
+        public static string ToWeirdCase(string s)
+        {
+            var words = s.Split().Select(str => string.Concat(str.Select((c, i) => i % 2 == 0 ? char.ToUpper(c) : char.ToLower(c))));
+            return string.Join(" ", words);
+        }
+
+        public static bool Solution(string str, string ending)
+        {
+            return str.EndsWith(ending);
+        }
+
+        public static int[] ArrayDiff(int[] a, int[] b)
+        {
+            return a.Where(i => !b.Contains(i)).ToArray();
+        }
+
         public static long rowSumOddNumbers(long n)
         {
             return n * n * n;

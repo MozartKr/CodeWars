@@ -173,6 +173,39 @@ namespace ItemCounterKata
 namespace KataTest
 {
     [TestFixture]
+    public class PaulCipherTest
+    {
+        [Test]
+        public void He1loTest()
+        {
+            Assert.AreEqual(" HM1QA", PaulCipher.Encode(" He1lo"));
+            Assert.AreEqual(" HE1LO", PaulCipher.Decode(" HM1QA"));
+        }
+    }
+
+    [TestFixture]
+    public class SumOfKTests
+    {
+
+        [Test]
+        public void Test1()
+        {
+            Console.WriteLine("****** Basic Tests");
+            List<int> ts = new List<int> { 50, 55, 56, 57, 58 };
+            int? n = SumOfK.chooseBestSum(163, 3, ts);
+            Assert.AreEqual(163, n);
+
+            ts = new List<int> { 50 };
+            n = SumOfK.chooseBestSum(163, 3, ts);
+            Assert.AreEqual(null, n);
+
+            ts = new List<int> { 91, 74, 73, 85, 73, 81, 87 };
+            n = SumOfK.chooseBestSum(230, 3, ts);
+            Assert.AreEqual(228, n);
+        }
+    }
+
+    [TestFixture]
     public class DiamondTest
     {
         [Test]
@@ -398,6 +431,14 @@ namespace KataTest
     public class Tests
     {
         [Test]
+        public static void ShouldWorkForSomeExamplesToWeirdCase()
+        {
+            Assert.AreEqual("ThIs", Kata.ToWeirdCase("This"));
+            Assert.AreEqual("Is", Kata.ToWeirdCase("is"));
+            Assert.AreEqual("ThIs Is A TeSt", Kata.ToWeirdCase("This is a test"));
+        }
+
+        [Test]
         public void test1rowSumOddNumbers()
         {
             Assert.AreEqual(125, Kata.rowSumOddNumbers(5));
@@ -584,6 +625,16 @@ namespace KataTest
     public class KataTests
     {
         [Test]
+        public void BasicTestsFactorial()
+        {
+            //Assert.AreEqual("1", Kata.Factorial(1));
+            //Assert.AreEqual("120", Kata.Factorial(5));
+            //Assert.AreEqual("362880", Kata.Factorial(9));
+            //Assert.AreEqual("1307674368000", Kata.Factorial(15));
+            Assert.AreEqual("65180489268784940718657353938", Kata.Factorial(65530));
+        }
+
+        [Test]
         public void Test1()
         {
             string[] expected = { "Ryan", "Mark" };
@@ -657,6 +708,48 @@ namespace KataTest
     [TestFixture]
     public class SolutionTest
     {
+        [Test]
+        public void SampleDeNico()
+        {
+            Assert.AreEqual("secretinformation", Kata.DeNico("crazy", "cseerntiofarmit on  "));
+            Assert.AreEqual("secretinformation", Kata.DeNico("crazy", "cseerntiofarmit on"));
+            Assert.AreEqual("abcd", Kata.DeNico("abc", "abcd"));
+            Assert.AreEqual("1234567890", Kata.DeNico("ba", "2143658709"));
+            Assert.AreEqual("message", Kata.DeNico("a", "message"));
+            Assert.AreEqual("key", Kata.DeNico("key", "eky"));
+        }
+
+        private static object[] sampleTestCases = new object[]
+        {
+            new object[] {"samurai", "ai", true},
+            new object[] {"sumo", "omo", false},
+            new object[] {"ninja", "ja", true},
+            new object[] {"sensei", "i", true},
+            new object[] {"samurai", "ra", false},
+            new object[] {"abc", "abcd", false},
+            new object[] {"abc", "abc", true},
+            new object[] {"abcabc", "bc", true},
+            new object[] {"ails", "fails", false},
+            new object[] {"fails", "ails", true},
+            new object[] {"this", "fails", false},
+        };
+
+        [Test, TestCaseSource("sampleTestCases")]
+        public void SampleTest(string str, string ending, bool expected)
+        {
+            Assert.AreEqual(expected, Kata.Solution(str, ending));
+        }
+
+        [Test]
+        public void SampleTestArrayDiff()
+        {
+            Assert.AreEqual(new int[] { 2 }, Kata.ArrayDiff(new int[] { 1, 2 }, new int[] { 1 }));
+            Assert.AreEqual(new int[] { 2, 2 }, Kata.ArrayDiff(new int[] { 1, 2, 2 }, new int[] { 1 }));
+            Assert.AreEqual(new int[] { 1 }, Kata.ArrayDiff(new int[] { 1, 2, 2 }, new int[] { 2 }));
+            Assert.AreEqual(new int[] { 1, 2, 2 }, Kata.ArrayDiff(new int[] { 1, 2, 2 }, new int[] { }));
+            Assert.AreEqual(new int[] { }, Kata.ArrayDiff(new int[] { }, new int[] { 1, 2 }));
+        }
+
         [Test]
         public void SimpleArray1()
         {
