@@ -173,6 +173,29 @@ namespace ItemCounterKata
 namespace KataTest
 {
     [TestFixture]
+    public class UnitTest
+    {
+        private readonly Evaluator evaluator = new Evaluator();
+
+        Evaluator Evaluator
+        {
+            get { return evaluator; }
+        }
+
+        [Test]
+        [TestCase("1-1", ExpectedResult = 0)]
+        [TestCase("1+1", ExpectedResult = 2)]
+        [TestCase("1 - 1", ExpectedResult = 0)]
+        [TestCase("1* 1", ExpectedResult = 1)]
+        [TestCase("1 /1", ExpectedResult = 1)]
+        [TestCase("2 / 2 + 3 * 4 - 6", ExpectedResult = 7)]
+        public double TestEvaluation(string expression)
+        {
+            return Evaluator.Evaluate(expression);
+        }
+    }
+
+    [TestFixture]
     public class PaulCipherTest
     {
         [Test]
@@ -872,6 +895,19 @@ namespace KataTest
         public void Tests()
         {
             Assert.AreEqual(5, Kata.find_it(new[] { 20, 1, -1, 2, -2, 3, 3, 5, 5, 1, 2, 4, 20, 4, -1, -2, 5 }));
+        }
+
+        [Test]
+        public void IdValidTest()
+        {
+            //Assert.AreEqual(false, Kata.ValidatePw("1"));
+            Assert.AreEqual(true, Kata.ValidatePw("123456789a1"));
+            Assert.AreEqual(false, Kata.ValidatePw("aaaaaaaaa"));
+            Assert.AreEqual(false, Kata.ValidatePw("aaaaaa1@3"));
+            Assert.AreEqual(true, Kata.ValidatePw("rlagudcjf1!"));
+            Assert.AreEqual(false, Kata.ValidatePw("dkffkdkffksss"));
+            Assert.AreEqual(true, Kata.ValidatePw("dkffkdkffkss1@"));
+            Assert.AreEqual(false, Kata.ValidatePw("1"));
         }
 
         [Test, Description("ValidatePin should return false for pins with length other than 4 or 6")]

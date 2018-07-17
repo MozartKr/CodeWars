@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -42,6 +43,14 @@ namespace ItemCounterKata
 
 namespace KataTest
 {
+    public class Evaluator
+    {
+        public double Evaluate(string expression)
+        {
+            var computedValue = new DataTable().Compute(expression, string.Empty);
+            return Convert.ToDouble(computedValue);
+        }
+    }
 
     public class PaulCipher
     {
@@ -666,6 +675,36 @@ namespace KataTest
                 if (seq.Count(j => j == i) % 2 == 1) return i;
             }
             return -1;
+        }
+
+        public static bool ValidatePw(string pw)
+        {
+            //비밀번호는 숫자, 문자, 특수문자 혼합하여 9자 이상
+            var vaild = Regex.IsMatch(pw, @"(?=.{9,})(?=.*[\d])(?=.*[\w])(?=.*[~!@#\$%^&\*\(\)_\+])");
+            if (vaild)
+            {
+                //동일한 문자 n(3)회 이상 사용 불가
+                vaild = new Func<string, int, bool>(delegate(string s, int checkCnt)
+                {
+                    var cnt = 0;
+                    var prevChar = s.FirstOrDefault();
+                    foreach (var c in s)
+                    {
+                        if (prevChar.Equals(c))
+                        {
+                            cnt++;
+                        }
+                        else
+                        {
+                            prevChar = c;
+                            cnt = 1;
+                        }
+                        if (cnt == checkCnt) return false;
+                    }
+                    return true;
+                }).Invoke(pw, 3);
+            }
+            return vaild;
         }
 
         public static bool ValidatePin(string pin)
