@@ -901,7 +901,7 @@ namespace KataTest
         public void IdValidTest()
         {
             //Assert.AreEqual(false, Kata.ValidatePw("1"));
-            Assert.AreEqual(true, Kata.ValidatePw("123456789a1"));
+            Assert.AreEqual(true, Kata.ValidatePw("123456789a1!"));
             Assert.AreEqual(false, Kata.ValidatePw("aaaaaaaaa"));
             Assert.AreEqual(false, Kata.ValidatePw("aaaaaa1@3"));
             Assert.AreEqual(true, Kata.ValidatePw("rlagudcjf1!"));
