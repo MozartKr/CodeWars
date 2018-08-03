@@ -11,6 +11,7 @@ namespace KataTest
         {
             // Branch Test !!!!!
             // Hello World ~!
+            // Push Test~!
             Test();
         }
 
