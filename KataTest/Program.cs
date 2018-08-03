@@ -9,6 +9,8 @@ namespace KataTest
     {
         static void Main(string[] args)
         {
+            // Branch Test !!!!!
+            // Hello World ~!
             Test();
         }
 
