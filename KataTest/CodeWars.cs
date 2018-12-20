@@ -363,6 +363,49 @@ namespace KataTest
 
     public class Kata
     {
+        public static long NextSmaller(long n)
+        {
+            var strN = n.ToString();
+            if (strN.Length == 1) return -1;
+
+            var last = strN.Last();
+            if (strN.All(c => c == last)) return -1;
+
+            var biggerNum = last;
+            var biggerNumIdx = -1;
+            var prev = Convert.ToInt32(last);
+
+            // biggerNum Find RightToLeft
+            for (int i = strN.Length - 1; i >= 0; i--)
+            {
+                if (prev < strN[i])
+                {
+                    biggerNum = strN[i];
+                    biggerNumIdx = i;
+                    break;
+                }
+
+                prev = strN[i];
+            }
+            
+            if (biggerNumIdx == -1) return -1;
+            for (int i = strN.Length - 1; i > biggerNumIdx; i--)
+            {
+                if (biggerNum != strN[i])
+                {
+                    var lastIdx = i;
+                    var swapArray = strN.ToCharArray();
+                    Swap(swapArray, biggerNumIdx, lastIdx);
+                    var orderArray = swapArray.Skip(biggerNumIdx + 1).OrderByDescending(c => c);
+                    var mergedArray = swapArray.Take(biggerNumIdx + 1).Concat(orderArray);
+                    var mergedNum = Convert.ToInt64(string.Concat(mergedArray));
+                    var smallerNum = n > mergedNum ? mergedNum : -1;
+                    if (smallerNum != -1 & strN.Length == smallerNum.ToString().Length) return smallerNum;
+                }   
+            }
+            return -1;
+        }
+        
         public static string DeNico(string key, string message)
         {
             var sortLetters = key.OrderBy(c => c).ToList();
