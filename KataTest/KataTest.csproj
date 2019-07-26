@@ -53,6 +53,12 @@
   <ItemGroup>
     <Compile Include="CodeWars.cs" />
     <Compile Include="CodeWarsTest.cs" />
+    <Compile Include="First Class Factorial Function\FunctionalFactorial.cs" />
+    <Compile Include="First Class Factorial Function\FunctionalFactorial.Test.cs" />
+    <Compile Include="Help the bookseller\StockList.cs" />
+    <Compile Include="Help the bookseller\StockListTests.cs" />
+    <Compile Include="PatternCraft - State\Solution.cs" />
+    <Compile Include="PatternCraft - State\SolutionTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
